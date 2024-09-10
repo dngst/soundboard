@@ -17,7 +17,7 @@ $(document).ready(function() {
     audioFiles.forEach((audioFile, index) => {
         const fileTitle = audioFile.split("/")[1].split(".")[0];
         const audioPlayer = `
-            <div class="player">
+            <div class="player" tabindex=${index + 1}>
                 <audio id="sound-${index}">
                     <source src="${audioFile}" type="audio/mpeg">
                     Your browser does not support the audio element.
@@ -31,7 +31,7 @@ $(document).ready(function() {
         const $player = $(`.player:eq(${index})`);
         const audio = $player.find('audio')[0];
 
-        $player.click(() => {
+        const toggleAudio = (audio, fileTitle) => {
             if (audio.paused) {
                 audio.play();
                 document.title = fileTitle;
@@ -40,11 +40,21 @@ $(document).ready(function() {
                 audio.pause();
                 document.body.style.cursor = 'default';
             }
+        };
+
+        $player.click(() => {
+            toggleAudio(audio, fileTitle);
         });
 
         audio.addEventListener('ended', () => {
             document.title = defaultTitle;
             document.body.style.cursor = 'default';
+        });
+
+        $player.keydown((event) => {
+            if (event.key === 'Enter') {
+                toggleAudio(audio, fileTitle);
+            }
         });
     });
 });
